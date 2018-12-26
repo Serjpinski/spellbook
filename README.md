@@ -1,0 +1,2 @@
+# spellbook
+Shell alias manager
