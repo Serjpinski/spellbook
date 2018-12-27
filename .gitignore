@@ -1,5 +1,5 @@
 .idea/
 .env/
 
-books
-*.book
+book.json
+book.alias
