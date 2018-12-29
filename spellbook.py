@@ -16,45 +16,75 @@ def main():
     args = sys.argv[1:]
     args_len = len(args)
 
-    if args[0] == "list":
-        op_list(None if args_len == 1 else args[1])
-    elif args[0] == "add":
-        op_add(args[1], None if args_len == 2 else args[2], None)
+    if args_len == 0:
+        print(get_usage())
+    elif args[0] == "list":
+        op_list(args[1:])
+    elif args[0] == "add" and args_len > 1:
+        op_add(args[1:])
+    else:
+        print(get_usage())
+
+
+def get_usage():
+
+    return ("Usage:\n"
+            "spellbook.py list [<spell>]\n"
+            "spellbook.py add <spell>")
 
 
 def op_list(name):
 
-    if name is None:
-        book = file_to_json(BOOK_FILE)
-        print(json.dumps(book["spells"], indent=4) if "spells" in book else "")
-    else:
-        print("Listing subspells for spell {}".format(name))
+    book = file_to_json(BOOK_FILE)
+    to_print = get_spell(book, name)
+    if to_print is not None:
+        print(json.dumps(to_print, indent=4))
 
 
-def op_add(name, description, command):
+def get_spell(book, name):
+
+    if len(name) == 0:
+        return book
+
+    if "spells" in book:
+        for spell in book["spells"]:
+            if spell["name"] == name[0]:
+                return get_spell(spell, name[1:])
+
+    return None
+
+
+def op_add(name):
 
     book = file_to_json(BOOK_FILE)
+    parent = get_spell(book, name[:-1])
 
-    if "spells" not in book:
-        book["spells"] = list()
+    if parent is None:
+        print("Parent not found: {}".format(" ".join(name[:-1])))
+        return
+
+    leaf_name = name[-1]
+
+    if "spells" not in parent:
+        parent["spells"] = list()
 
     index = 0
     spell = dict()
 
-    while index < len(book["spells"]) and name >= book["spells"][index]["name"]:
-        if name == book["spells"][index]["name"]:
-            spell = book["spells"][index]
+    while index < len(parent["spells"]) and leaf_name >= parent["spells"][index]["name"]:
+        if leaf_name == parent["spells"][index]["name"]:
+            spell = parent["spells"][index]
         index += 1
 
     if "name" not in spell:
-        spell["name"] = name
-        book["spells"].insert(index, spell)
-        print("Adding new spell {}".format(name))
+        spell["name"] = leaf_name
+        parent["spells"].insert(index, spell)
+        print("Adding new spell: {}".format(" ".join(name)))
     else:
-        print("Updating spell {}".format(name))
+        print("Updating spell: {}".format(" ".join(name)))
 
-    spell["description"] = description
-    spell["command"] = command
+    spell["description"] = None
+    spell["command"] = None
     json_to_file(book, BOOK_FILE)
 
 
