@@ -22,6 +22,8 @@ def main():
         op_list(args[1:])
     elif args[0] == "add" and args_len > 1:
         op_add(args[1:])
+    elif args[0] == "remove" and args_len > 1:
+        op_remove(args[1:])
     else:
         print(get_usage())
 
@@ -30,15 +32,16 @@ def get_usage():
 
     return ("Usage:\n"
             "spellbook.py list [<spell>]\n"
-            "spellbook.py add <spell>")
+            "spellbook.py add <spell>\n"
+            "spellbook.py remove <spell>")
 
 
 def op_list(name):
 
-    book = file_to_json(BOOK_FILE)
+    book = get_book()
     to_print = get_spell(book, name)
     if to_print is not None:
-        print(json.dumps(to_print, indent=4))
+        print(json.dumps(to_print, indent=4, sort_keys=True))
 
 
 def get_spell(book, name):
@@ -46,17 +49,15 @@ def get_spell(book, name):
     if len(name) == 0:
         return book
 
-    if "spells" in book:
-        for spell in book["spells"]:
-            if spell["name"] == name[0]:
-                return get_spell(spell, name[1:])
+    if name[0] in book["spells"]:
+        return get_spell(book["spells"][name[0]], name[1:])
 
     return None
 
 
 def op_add(name):
 
-    book = file_to_json(BOOK_FILE)
+    book = get_book()
     parent = get_spell(book, name[:-1])
 
     if parent is None:
@@ -65,34 +66,51 @@ def op_add(name):
 
     leaf_name = name[-1]
 
-    if "spells" not in parent:
-        parent["spells"] = list()
-
-    index = 0
-    spell = dict()
-
-    while index < len(parent["spells"]) and leaf_name >= parent["spells"][index]["name"]:
-        if leaf_name == parent["spells"][index]["name"]:
-            spell = parent["spells"][index]
-        index += 1
-
-    if "name" not in spell:
-        spell["name"] = leaf_name
-        parent["spells"].insert(index, spell)
+    if leaf_name not in parent["spells"]:
+        spell = dict()
+        parent["spells"][leaf_name] = spell
         print("Adding new spell: {}".format(" ".join(name)))
     else:
+        spell = parent["spells"][leaf_name]
         print("Updating spell: {}".format(" ".join(name)))
 
     spell["description"] = None
     spell["command"] = None
+    spell["spells"] = dict()
     json_to_file(book, BOOK_FILE)
+
+
+def op_remove(name):
+
+    book = get_book()
+    parent = get_spell(book, name[:-1])
+    if parent is None:
+        print("Parent not found: {}".format(" ".join(name[:-1])))
+    elif name[-1] not in parent["spells"]:
+        print("Spell not found: {}".format(" ".join(name)))
+    else:
+        print("Removing spell: {}".format(" ".join(name)))
+        parent["spells"].pop(name[-1])
+        json_to_file(book, BOOK_FILE)
+
+
+def get_book():
+
+    book = file_to_json(BOOK_FILE)
+
+    if book is None:
+        book = dict()
+        book["spells"] = dict()
+        json_to_file(book, BOOK_FILE)
+
+    return book
 
 
 def file_to_json(path):
     if os.path.exists(path):
         with open(path, 'r') as f:
             return json.loads(f.read())
-    return dict()
+    return None
 
 
 def json_to_file(j, path):
