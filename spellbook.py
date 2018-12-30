@@ -19,7 +19,9 @@ def main():
     if args_len == 0:
         print(get_usage())
     elif args[0] == "list":
-        op_list(args[1:])
+        op_list(args[1:], True)
+    elif args[0] == "listj":
+        op_list(args[1:], False)
     elif args[0] == "add" and args_len > 1:
         op_add(args[1:])
     elif args[0] == "remove" and args_len > 1:
@@ -31,17 +33,20 @@ def main():
 def get_usage():
 
     return ("Usage:\n"
-            "spellbook.py list [<spell>]\n"
+            "spellbook.py list[j] [<spell>]\n"
             "spellbook.py add <spell>\n"
             "spellbook.py remove <spell>")
 
 
-def op_list(name):
+def op_list(name, compact):
 
     book = get_book()
     to_print = get_spell(book, name)
     if to_print is not None:
-        print(json.dumps(to_print, indent=4, sort_keys=True))
+        if compact:
+            print_spell_compact(name, to_print)
+        else:
+            print(json.dumps(to_print, indent=4, sort_keys=True))
 
 
 def get_spell(book, name):
@@ -74,7 +79,6 @@ def op_add(name):
         spell = parent["spells"][leaf_name]
         print("Updating spell: {}".format(" ".join(name)))
 
-    spell["description"] = None
     spell["command"] = None
     spell["spells"] = dict()
     json_to_file(book, BOOK_FILE)
@@ -104,6 +108,14 @@ def get_book():
         json_to_file(book, BOOK_FILE)
 
     return book
+
+
+def print_spell_compact(name, spell):
+
+    if "command" in spell:
+        print(" ".join(name) + " > " + ("" if spell["command"] is None else spell["command"]))
+    for subname, subspell in sorted(spell["spells"].items()):
+        print_spell_compact(name + [subname], subspell)
 
 
 def file_to_json(path):
