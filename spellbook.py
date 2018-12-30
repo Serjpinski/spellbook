@@ -6,11 +6,6 @@ BOOK_FILE = "book.json"
 ALIAS_FILE = "book.alias"
 
 
-# spell add goto
-# spell goto add
-#
-# spell list
-# spell goto list
 def main():
 
     args = sys.argv[1:]
@@ -75,11 +70,13 @@ def op_add(name):
         spell = dict()
         parent["spells"][leaf_name] = spell
         print("Adding new spell: {}".format(" ".join(name)))
+        spell["command"] = input("Spell command: ")
     else:
         spell = parent["spells"][leaf_name]
         print("Updating spell: {}".format(" ".join(name)))
+        print("Current command: {}".format(spell["command"]))
+        spell["command"] = input("New command: ")
 
-    spell["command"] = None
     spell["spells"] = dict()
     json_to_file(book, BOOK_FILE)
 
