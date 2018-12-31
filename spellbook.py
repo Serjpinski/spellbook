@@ -2,8 +2,9 @@ import json
 import os
 import sys
 
-BOOK_FILE = "book.json"
-ALIAS_FILE = "book.alias"
+BASE_DIR = os.path.dirname(__file__)
+BOOK_FILE = os.path.join(BASE_DIR, "book.json")
+ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 
 
 def main():
