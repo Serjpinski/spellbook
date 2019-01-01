@@ -7,6 +7,11 @@ BOOK_FILE = os.path.join(BASE_DIR, "book.json")
 ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 
 
+# TODO add spell modifiers: resolve values of a group of arguments in a spell, i.e.:
+# TODO my > mysql -h {{host}} -u {{user}} -p{{pass}} -e {{command}}
+# TODO modifier "local" > {"host": "localhost", "user": "localuser", "pass": "somepassword"}
+# TODO modifier "prod" > {"host": "mysql-prod-ip", "user": "produser", "pass": "otherpassword"}
+# TODO then you can: my --prod select 1
 def main():
 
     args = sys.argv[1:]
@@ -24,14 +29,6 @@ def main():
         op_remove(args[1:])
     else:
         print(get_usage())
-
-
-def get_usage():
-
-    return ("Usage:\n"
-            "spellbook.py list[j] [<spell>]\n"
-            "spellbook.py add <spell>\n"
-            "spellbook.py remove <spell>")
 
 
 def op_list(name, compact):
@@ -106,6 +103,17 @@ def get_book():
         json_to_file(book, BOOK_FILE)
 
     return book
+
+
+### MISC ###
+
+
+def get_usage():
+
+    return ("Usage:\n"
+            "spellbook.py list[j] [<spell>]\n"
+            "spellbook.py add <spell>\n"
+            "spellbook.py remove <spell>")
 
 
 def print_spell_compact(name, spell):
