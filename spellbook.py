@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import sys
 
 BASE_DIR = os.path.dirname(__file__)
@@ -28,6 +29,8 @@ def main():
         op_add(args[1:])
     elif args[0] == "remove" and args_len > 1:
         op_remove(args[1:])
+    elif args[0] == "reload":
+        op_reload()
     else:
         print(get_usage())
 
@@ -96,6 +99,10 @@ def op_remove(name):
         update_data_files(book)
 
 
+def op_reload():
+    subprocess.call("source {}".format(ALIAS_FILE))
+
+
 def get_book():
 
     book = file_to_json(BOOK_FILE)
@@ -111,6 +118,17 @@ def get_book():
 def update_data_files(book):
     json_to_file(book, BOOK_FILE)
     string_to_file(get_aliases(book), ALIAS_FILE)
+    op_reload()
+
+
+def get_usage():
+
+    return ("Usage:\n"
+            "list\t\tList all spells in the book (use listj for json output)\n"
+            "list <spell>\t\tList <spell> and its children (use listj for json output)\n"
+            "add <spell>\t\tAdd <spell> to the book\n"
+            "remove <spell>\t\tRemove <spell> and its children from the book\n"
+            "reload\t\tReload spell definitions in this shell (automatic when adding or removing)\n")
 
 
 ### ALIAS GENERATION ###
@@ -140,14 +158,6 @@ def get_alias(name, spell):
 
 
 ### MISC ###
-
-def get_usage():
-
-    return ("Usage:\n"
-            "spellbook.py list[j] [<spell>]\n"
-            "spellbook.py add <spell>\n"
-            "spellbook.py remove <spell>")
-
 
 def print_spell_compact(name, spell):
 
