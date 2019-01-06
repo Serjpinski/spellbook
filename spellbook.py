@@ -116,7 +116,7 @@ def update_data_files(book):
 ### ALIAS GENERATION ###
 
 def get_aliases(book):
-    return "\n".join([get_alias([spell], book["spells"][spell]) for spell in book["spells"]])
+    return "\n".join([get_root_alias(spell, book["spells"][spell]) for spell in book["spells"]])
 
 
 def get_root_alias(name, spell):
@@ -126,7 +126,7 @@ def get_root_alias(name, spell):
 
 def get_alias(name, spell):
 
-    test_statement = "[ ${} == {} ]"
+    test_statement = "[ ${} == \"{}\" ]"
 
     if len(spell["spells"]) > 0:
         return "\n".join([get_alias(name + [subspell], spell["spells"][subspell]) for subspell in spell["spells"]])
