@@ -155,7 +155,7 @@ def get_alias(name, spell):
 def print_spell_compact(name, spell):
 
     if "command" in spell:
-        print(" ".join(name) + " > " + ("" if spell["command"] is None else spell["command"]))
+        print(" ".join(name) + " => " + ("" if spell["command"] is None else spell["command"]))
     for subname, subspell in sorted(spell["spells"].items()):
         print_spell_compact(name + [subname], subspell)
 
