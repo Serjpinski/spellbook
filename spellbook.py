@@ -1,6 +1,5 @@
 import json
 import os
-import subprocess
 import sys
 
 BASE_DIR = os.path.dirname(__file__)
@@ -29,8 +28,6 @@ def main():
         op_add(args[1:])
     elif args[0] == "remove" and args_len > 1:
         op_remove(args[1:])
-    elif args[0] == "reload":
-        op_reload()
     else:
         print(get_usage())
 
@@ -66,7 +63,7 @@ def op_add(name):
 
     if parent is None:
         print("Parent not found: {}".format(" ".join(name[:-1])))
-        return
+        exit(1)
 
     leaf_name = name[-1]
 
@@ -91,16 +88,14 @@ def op_remove(name):
     parent = get_spell(book, name[:-1])
     if parent is None:
         print("Parent not found: {}".format(" ".join(name[:-1])))
+        exit(1)
     elif name[-1] not in parent["spells"]:
         print("Spell not found: {}".format(" ".join(name)))
+        exit(1)
     else:
         print("Removing spell: {}".format(" ".join(name)))
         parent["spells"].pop(name[-1])
         update_data_files(book)
-
-
-def op_reload():
-    subprocess.call("source " + ALIAS_FILE, shell=True, executable="/bin/bash")
 
 
 def get_book():
@@ -118,7 +113,6 @@ def get_book():
 def update_data_files(book):
     json_to_file(book, BOOK_FILE)
     string_to_file(get_aliases(book), ALIAS_FILE)
-    op_reload()
 
 
 def get_usage():
@@ -127,8 +121,7 @@ def get_usage():
             "list\t\t\tList all spells in the book (use listj for json output)\n"
             "list <spell>\t\tList <spell> and its children (use listj for json output)\n"
             "add <spell>\t\tAdd <spell> to the book\n"
-            "remove <spell>\t\tRemove <spell> and its children from the book\n"
-            "reload\t\t\tReload spell definitions in this shell (automatic when adding or removing)\n")
+            "remove <spell>\t\tRemove <spell> and its children from the book\n")
 
 
 ### ALIAS GENERATION ###
