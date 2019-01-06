@@ -120,7 +120,7 @@ def get_aliases(book):
 
 
 def get_root_alias(name, spell):
-    function_statement = "function {} () {\n{}\n}\n"
+    function_statement = "function {} () {{\n{}\n}}\n"
     return function_statement.format(name, get_alias([name], spell))
 
 
