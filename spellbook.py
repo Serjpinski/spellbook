@@ -128,7 +128,7 @@ def get_alias(name, spell):
 
     test_statement = "[ ${} == {} ]"
 
-    if len(spell["spells"] > 0):
+    if len(spell["spells"]) > 0:
         return "\n".join([get_alias(name + [subspell], spell["spells"][subspell]) for subspell in spell["spells"]])
 
     command_statement = "\t"
