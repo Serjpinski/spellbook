@@ -125,9 +125,9 @@ def get_usage():
 
     return ("Usage:\n"
             "list\t\t\tList all spells in the book (use listj for json output)\n"
-            "list <spell>\t\t\tList <spell> and its children (use listj for json output)\n"
-            "add <spell>\t\t\tAdd <spell> to the book\n"
-            "remove <spell>\t\t\tRemove <spell> and its children from the book\n"
+            "list <spell>\t\tList <spell> and its children (use listj for json output)\n"
+            "add <spell>\t\tAdd <spell> to the book\n"
+            "remove <spell>\t\tRemove <spell> and its children from the book\n"
             "reload\t\t\tReload spell definitions in this shell (automatic when adding or removing)\n")
 
 
