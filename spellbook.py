@@ -100,7 +100,7 @@ def op_remove(name):
 
 
 def op_reload():
-    subprocess.call(["source", ALIAS_FILE])
+    exec(open(ALIAS_FILE).read())
 
 
 def get_book():
