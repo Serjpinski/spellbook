@@ -132,11 +132,9 @@ def get_alias(name, spell):
         return "\n".join([get_alias(name + [subspell], spell["spells"][subspell]) for subspell in spell["spells"]])
 
     command_statement = "\t"
-    arg_index = 1
 
-    for n in name:
-        command_statement += test_statement.format(arg_index, n) + " && "
-        arg_index += 1
+    for arg_index in range(1, len(name)):
+        command_statement += test_statement.format(arg_index, name[arg_index]) + " && "
 
     return command_statement + spell["command"]
 
