@@ -12,6 +12,7 @@ ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 # TODO modifier "local" > {"host": "localhost", "user": "localuser", "pass": "somepassword"}
 # TODO modifier "prod" > {"host": "mysql-prod-ip", "user": "produser", "pass": "otherpassword"}
 # TODO then you can: my --prod select 1
+
 def main():
 
     args = sys.argv[1:]
@@ -30,6 +31,8 @@ def main():
     else:
         print(get_usage())
 
+
+### SPELL CRUD OPERATIONS ###
 
 def op_list(name, compact):
 
@@ -76,7 +79,7 @@ def op_add(name):
         spell["command"] = input("New command: ")
 
     spell["spells"] = dict()
-    json_to_file(book, BOOK_FILE)
+    update_data_files(book)
 
 
 def op_remove(name):
@@ -90,7 +93,7 @@ def op_remove(name):
     else:
         print("Removing spell: {}".format(" ".join(name)))
         parent["spells"].pop(name[-1])
-        json_to_file(book, BOOK_FILE)
+        update_data_files(book)
 
 
 def get_book():
@@ -100,13 +103,45 @@ def get_book():
     if book is None:
         book = dict()
         book["spells"] = dict()
-        json_to_file(book, BOOK_FILE)
+        update_data_files(book)
 
     return book
 
 
-### MISC ###
+def update_data_files(book):
+    json_to_file(book, BOOK_FILE)
+    string_to_file(get_aliases(book), ALIAS_FILE)
 
+
+### ALIAS GENERATION ###
+
+def get_aliases(book):
+    return "\n".join([get_alias([spell], book["spells"][spell]) for spell in book["spells"]])
+
+
+def get_root_alias(name, spell):
+    function_statement = "function {} () {\n{}\n}\n"
+    return function_statement.format(name, get_alias([name], spell))
+
+
+def get_alias(name, spell):
+
+    test_statement = "[ ${} == {} ]"
+
+    if len(spell["spells"] > 0):
+        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell]) for subspell in spell["spells"]])
+
+    command_statement = "\t"
+    arg_index = 1
+
+    for n in name:
+        command_statement += test_statement.format(arg_index, n) + " && "
+        arg_index += 1
+
+    return command_statement + spell["command"]
+
+
+### MISC ###
 
 def get_usage():
 
@@ -132,8 +167,12 @@ def file_to_json(path):
 
 
 def json_to_file(j, path):
+    string_to_file(json.dumps(j), path)
+
+
+def string_to_file(string, path):
     with open(path, 'w') as f:
-        f.write(json.dumps(j))
+        f.write(string)
 
 
 if __name__ == '__main__':
