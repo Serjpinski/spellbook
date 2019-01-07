@@ -5,17 +5,19 @@ Shell alias manager
 
 Add to shell config file:
 ```sh
+##### SPELLBOOK CONF #####
 alias spellreload='source {spellbook_path}/book.alias'
 
 function spell () {
         python3 {spellbook_path}/spellbook.py "$@"
         if [ $? -eq 0 ]; then
-                [ $# == 2 ] && [ $1 == "remove" ] && unset -f $2
+                [ $# = 2 ] && [ $1 = "remove" ] && unset -f $2
                 spellreload
         fi
 }
 
 spellreload
+##########################
 ```
 
 After reloading your shell config, you will be able to:
