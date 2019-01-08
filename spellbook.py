@@ -13,6 +13,12 @@ ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 # TODO modifier "prod" > {"host": "mysql-prod-ip", "user": "produser", "pass": "otherpassword"}
 # TODO then you can: my --prod select 1
 
+# TODO good example for usage;
+# TODO shfor => for i in {{array}}; do {{command}}; done
+# TODO array => a b c
+# TODO command => echo $i
+# TODO for i in a b c; do echo $i; done
+
 def main():
 
     args = sys.argv[1:]
