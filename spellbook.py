@@ -99,7 +99,6 @@ def op_remove(name):
         print("Spell not found: {}".format(" ".join(name)))
         exit(1)
     else:
-        print("Removing spell: {}".format(" ".join(name)))
         hierarchy[-2]["spells"].pop(name[-1])
         update_data_files(book)
 
