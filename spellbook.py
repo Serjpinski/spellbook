@@ -19,6 +19,8 @@ ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 # TODO command => echo $i
 # TODO for i in a b c; do echo $i; done
 
+# TODO use external bash file with functions to process arguments and/or resolve final command?
+
 def main():
 
     args = sys.argv[1:]
