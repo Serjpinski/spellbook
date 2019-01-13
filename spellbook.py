@@ -42,13 +42,13 @@ def main():
 
 def get_hierarchy(tree, name):
 
-    if name[0] in tree["spells"]:
-        if len(name) == 1:
-            return [tree["spells"][name[0]]]
-        else:
-            return [tree] + get_hierarchy(tree["spells"][name[0]], name[1:])
+    if len(name) == 0:
+        return [tree]
 
-    return []
+    if name[0] in tree["spells"]:
+        return [tree] + get_hierarchy(tree["spells"][name[0]], name[1:])
+
+    return [tree]
 
 
 def op_list(name, compact):
