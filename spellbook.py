@@ -74,7 +74,7 @@ def op_add(name):
     while len(hierarchy) < len(name) + 1:
         spell = dict()
         spell["spells"] = dict()
-        hierarchy[-1]["spells"][name[len(hierarchy)]] = spell
+        hierarchy[-1]["spells"][name[len(hierarchy) - 1]] = spell
         hierarchy.append(spell)
 
     spell = hierarchy[-1]
