@@ -38,69 +38,69 @@ def main():
         print(get_usage())
 
 
-### SPELL CRUD OPERATIONS ###
+# # # SPELL CRUD OPERATIONS # # #
+
+def get_hierarchy(tree, name):
+
+    if name[0] in tree["spells"]:
+        if len(name) == 1:
+            return [tree["spells"][name[0]]]
+        else:
+            return [tree] + get_hierarchy(tree["spells"][name[0]], name[1:])
+
+    return []
+
 
 def op_list(name, compact):
 
     book = get_book()
-    to_print = get_spell(book, name)
-    if to_print is not None:
+    hierarchy = get_hierarchy(book, name)
+
+    if len(hierarchy) == len(name) + 1:
         if compact:
-            print_spell_compact(name, to_print)
+            print_spell_compact(name, hierarchy[-1])
         else:
-            print(json.dumps(to_print, indent=4, sort_keys=True))
-
-
-def get_spell(book, name):
-
-    if len(name) == 0:
-        return book
-
-    if name[0] in book["spells"]:
-        return get_spell(book["spells"][name[0]], name[1:])
-
-    return None
+            print(json.dumps(hierarchy[-1], indent=4, sort_keys=True))
+    else:
+        print("Spell not found: {}".format(" ".join(name)))
 
 
 def op_add(name):
 
     book = get_book()
-    parent = get_spell(book, name[:-1])
+    hierarchy = get_hierarchy(book, name)
 
-    if parent is None:
-        print("Parent not found: {}".format(" ".join(name[:-1])))
-        exit(1)
-
-    leaf_name = name[-1]
-
-    if leaf_name not in parent["spells"]:
+    # Create missing spells
+    while len(hierarchy) < len(name) + 1:
         spell = dict()
-        parent["spells"][leaf_name] = spell
-        print("Adding new spell: {}".format(" ".join(name)))
+        spell["spells"] = dict()
+        hierarchy[-1]["spells"][name[len(hierarchy)]] = spell
+        hierarchy.append(spell)
+
+    spell = hierarchy[-1]
+
+    if "command" not in spell:
         spell["command"] = input("Spell command: ")
     else:
-        spell = parent["spells"][leaf_name]
-        print("Updating spell: {}".format(" ".join(name)))
         print("Current command: {}".format(spell["command"]))
         spell["command"] = input("New command: ")
 
-    spell["spells"] = dict()
     update_data_files(book)
 
 
 def op_remove(name):
 
     book = get_book()
-    parent = get_spell(book, name[:-1])
-    if parent is None:
+    hierarchy = get_hierarchy(book, name)
+    if len(hierarchy) < len(name):
         print("Parent not found: {}".format(" ".join(name[:-1])))
         exit(1)
-    elif name[-1] not in parent["spells"]:
+    elif len(hierarchy) < len(name) + 1:
         print("Spell not found: {}".format(" ".join(name)))
         exit(1)
     else:
         print("Removing spell: {}".format(" ".join(name)))
-        parent["spells"].pop(name[-1])
+        hierarchy[-2]["spells"].pop(name[-1])
         update_data_files(book)
 
 
@@ -130,7 +130,7 @@ def get_usage():
             "remove <spell>\t\tRemove <spell> and its children from the book\n")
 
 
-### ALIAS GENERATION ###
+# # # ALIAS GENERATION # # #
 
 def get_aliases(book):
     return "\n".join([get_root_alias(spell, book["spells"][spell]) for spell in book["spells"]])
@@ -156,7 +156,7 @@ def get_alias(name, spell):
     return command_statement + spell["command"]
 
 
-### MISC ###
+# # # MISC # # #
 
 def print_spell_compact(name, spell):
 
