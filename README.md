@@ -20,7 +20,7 @@ spellreload
 ##########################
 ```
 
-After reloading your shell config, you will be able to:
+After reloading your shell, you will be able to:
 ```sh
 ~$ spell add goto p1 -c "cd $HOME/projects/project1"
 ~$ spell list
