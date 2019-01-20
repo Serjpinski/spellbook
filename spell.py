@@ -139,22 +139,26 @@ def get_aliases(book):
 
 def get_root_alias(name, spell):
     function_statement = "function {} () {{\n{}\n}}\n"
-    return function_statement.format(name, get_alias([name], spell))
+    return function_statement.format(name, get_alias([name], spell, 1))
 
 
-def get_alias(name, spell):
+def get_alias(name, spell, depth):
 
     test_statement = "[ ${} = \"{}\" ]"
 
     if len(spell["spells"]) > 0:
-        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell]) for subspell in spell["spells"]])
+        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell], depth + 1) for subspell in spell["spells"]])
 
     command_statement = "\t"
 
     for arg_index in range(1, len(name)):
         command_statement += test_statement.format(arg_index, name[arg_index]) + " && "
 
-    return command_statement + spell["command"]
+    return command_statement + get_resolve_statement(spell, depth)
+
+
+def get_resolve_statement(spell, depth):
+    return "$(python3 " + BASE_DIR + "/resolve.py \"" + spell["command"] + "\" { } \"${@:" + str(depth) + "}\")"
 
 
 # # # MISC # # #
