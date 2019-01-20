@@ -10,3 +10,7 @@ def main():
     right_delimiter = sys.argv[3]
     args = sys.argv[4:]
     print(command + left_delimiter + right_delimiter + args)
+
+
+if __name__ == '__main__':
+    main()
