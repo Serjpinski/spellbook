@@ -142,6 +142,7 @@ def get_root_alias(name, spell):
     return function_statement.format(name, get_alias([name], spell, 1))
 
 
+# TODO support commands for non-leaf commands
 def get_alias(name, spell, depth):
 
     test_statement = "[ ${} = \"{}\" ]"
@@ -157,6 +158,7 @@ def get_alias(name, spell, depth):
     return command_statement + get_resolve_statement(spell, depth)
 
 
+# TODO support configuring delimiters
 def get_resolve_statement(spell, depth):
     return "$(python3 " + BASE_DIR + "/resolve.py \"" + spell["command"] + "\" { } \"${@:" + str(depth) + "}\")"
 
