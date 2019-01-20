@@ -4,6 +4,7 @@ import sys
 
 # Gets a command, left/right delimiters for variables and a list of arguments.
 # Returns the command with variables substituted with arguments.
+# TODO migrate to bash?
 def main():
 
     command = sys.argv[1]
