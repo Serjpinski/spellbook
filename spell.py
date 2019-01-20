@@ -158,7 +158,7 @@ def get_alias(name, spell, depth):
 
 
 def get_resolve_statement(spell, depth):
-    return "$($(python3 " + BASE_DIR + "/resolve.py \"" + spell["command"] + "\" { } ${@:" + depth + "}))"
+    return "$($(python3 " + BASE_DIR + "/resolve.py \"" + spell["command"] + "\" { } ${@:" + str(depth) + "}))"
 
 
 # # # MISC # # #
