@@ -112,6 +112,8 @@ def get_book():
     if book is None:
         book = dict()
         book["spells"] = dict()
+        book["left_delimiter"] = "{{"
+        book["right_delimiter"] = "}}"
         update_data_files(book)
 
     return book
@@ -134,13 +136,14 @@ def get_usage():
 # # # ALIAS GENERATION # # #
 
 def get_aliases(book):
-    return "\n".join([get_root_alias(spell, book["spells"][spell]) for spell in book["spells"]])
+    return "\n".join([
+        get_root_alias(spell, book["spells"][spell], book["left_delimiter"], book["right_delimiter"])
+        for spell in book["spells"]])
 
 
-def get_root_alias(name, spell):
+def get_root_alias(name, spell, left_delimiter, right_delimiter):
     function_statement = "function {} () {{\n{}\n}}\n"
-    # TODO support configuring delimiters
-    return function_statement.format(name, get_alias([name], spell, "{", "}", 1))
+    return function_statement.format(name, get_alias([name], spell, left_delimiter, right_delimiter, 1))
 
 
 # TODO support commands for non-leaf spells
@@ -152,7 +155,9 @@ def get_alias(name, spell, left_delimiter, right_delimiter, depth):
     test_statement = "[ ${} = \"{}\" ]"
 
     if len(spell["spells"]) > 0:
-        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell], left_delimiter, right_delimiter, depth + 1) for subspell in spell["spells"]])
+        return "\n".join([
+            get_alias(name + [subspell], spell["spells"][subspell], left_delimiter, right_delimiter, depth + 1)
+            for subspell in spell["spells"]])
 
     command_statement = "\t"
 
