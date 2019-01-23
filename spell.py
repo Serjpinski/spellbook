@@ -112,8 +112,8 @@ def get_book():
     if book is None:
         book = dict()
         book["spells"] = dict()
-        book["left_delimiter"] = "{{"
-        book["right_delimiter"] = "}}"
+        book["left_delimiter"] = "{"
+        book["right_delimiter"] = "}"
         update_data_files(book)
 
     return book
