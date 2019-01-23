@@ -139,28 +139,32 @@ def get_aliases(book):
 
 def get_root_alias(name, spell):
     function_statement = "function {} () {{\n{}\n}}\n"
-    return function_statement.format(name, get_alias([name], spell, 1))
+    # TODO support configuring delimiters
+    return function_statement.format(name, get_alias([name], spell, "{", "}", 1))
 
 
-# TODO support commands for non-leaf commands
-def get_alias(name, spell, depth):
+# TODO support commands for non-leaf spells
+def get_alias(name, spell, left_delimiter, right_delimiter, depth):
+
+    left_delimiter = spell["left_delimiter"] if "left_delimiter" in spell else left_delimiter
+    right_delimiter = spell["right_delimiter"] if "right_delimiter" in spell else right_delimiter
 
     test_statement = "[ ${} = \"{}\" ]"
 
     if len(spell["spells"]) > 0:
-        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell], depth + 1) for subspell in spell["spells"]])
+        return "\n".join([get_alias(name + [subspell], spell["spells"][subspell], left_delimiter, right_delimiter, depth + 1) for subspell in spell["spells"]])
 
     command_statement = "\t"
 
     for arg_index in range(1, len(name)):
         command_statement += test_statement.format(arg_index, name[arg_index]) + " && "
 
-    return command_statement + get_resolve_statement(spell, depth)
+    return command_statement + get_resolve_statement(spell["command"], left_delimiter, right_delimiter, depth)
 
 
-# TODO support configuring delimiters
-def get_resolve_statement(spell, depth):
-    return "$(python3 " + BASE_DIR + "/resolve.py \"" + spell["command"] + "\" \"{\" \"}\" \"${@:" + str(depth) + "}\")"
+def get_resolve_statement(command, left_delimiter, right_delimiter, depth):
+    return "$(python3 " + BASE_DIR + "/resolve.py \"" + command + "\" \""\
+           + left_delimiter + "\" \"" + right_delimiter + "\" \"${@:" + str(depth) + "}\")"
 
 
 # # # MISC # # #
