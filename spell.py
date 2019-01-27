@@ -134,10 +134,10 @@ def update_data_files(book):
 def get_usage():
 
     return ("Usage:\n"
-            "list --- List all spells in the book\n"
-            "list <spell> --- List <spell> and its children\n"
-            "add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>] --- Add <spell> to the book\n"
-            "remove <spell> --- Remove <spell> and its children from the book\n")
+            "list\n-- List all spells in the book\n"
+            "list <spell>\n-- List <spell> and its children\n"
+            "add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\n-- Add <spell> to the book\n"
+            "remove <spell>\n-- Remove <spell> and its children from the book\n")
 
 
 # # # ALIAS GENERATION # # #
