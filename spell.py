@@ -36,6 +36,7 @@ def main():
         op_remove(ordered_args[1:])
     # TODO add import/export from/to json
     else:
+        # TODO add help option with info about other options, i.e. spell help add
         print(get_usage())
         exit(1)
 
