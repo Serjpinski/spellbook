@@ -24,20 +24,20 @@ ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 def main():
 
     args = sys.argv[1:]
-    args_len = len(args)
+    named_args, ordered_args = parse_args(args)
 
-    if args_len == 0:
+    if len(ordered_args) == 0:
         print(get_usage())
-    elif args[0] == "list":
-        op_list(args[1:], True)
-    elif args[0] == "listj":
-        op_list(args[1:], False)
-    elif args[0] == "add" and args_len > 1:
-        op_add(args[1:])
-    elif args[0] == "remove" and args_len > 1:
-        op_remove(args[1:])
+    elif ordered_args[0] == "list":
+        op_list(ordered_args[1:])
+    elif ordered_args[0] == "add" and len(ordered_args) > 1:
+        op_add(ordered_args[1:], named_args)
+    elif ordered_args[0] == "remove" and len(ordered_args) > 1:
+        op_remove(ordered_args[1:])
+    # TODO add import/export from/to json
     else:
         print(get_usage())
+        exit(1)
 
 
 # # # SPELL CRUD OPERATIONS # # #
@@ -53,21 +53,27 @@ def get_hierarchy(tree, name):
     return [tree]
 
 
-def op_list(name, compact):
+def op_list(name):
 
     book = get_book()
     hierarchy = get_hierarchy(book, name)
 
     if len(hierarchy) == len(name) + 1:
-        if compact:
-            print_spell_compact(name, hierarchy[-1])
-        else:
-            print(json.dumps(hierarchy[-1], indent=4, sort_keys=True))
+        print_spell(name, hierarchy[-1])
     else:
         print("Spell not found: {}".format(" ".join(name)))
+        exit(1)
 
 
-def op_add(name):
+def op_add(name, args):
+
+    command = args["c"] if "c" in args else None
+    left_delimiter = args["ld"] if "ld" in args else None
+    right_delimiter = args["rd"] if "rd" in args else None
+
+    if command is None:
+        print("Missing argument: -c <command>")
+        exit(1)
 
     book = get_book()
     hierarchy = get_hierarchy(book, name)
@@ -80,12 +86,9 @@ def op_add(name):
         hierarchy.append(spell)
 
     spell = hierarchy[-1]
-
-    if "command" not in spell:
-        spell["command"] = input("Spell command: ")
-    else:
-        print("Current command: {}".format(spell["command"]))
-        spell["command"] = input("New command: ")
+    spell["command"] = command
+    spell["left_delimiter"] = left_delimiter
+    spell["right_delimiter"] = right_delimiter
 
     update_data_files(book)
 
@@ -127,9 +130,9 @@ def update_data_files(book):
 def get_usage():
 
     return ("Usage:\n"
-            "list\t\t\tList all spells in the book (use listj for json output)\n"
-            "list <spell>\t\tList <spell> and its children (use listj for json output)\n"
-            "add <spell>\t\tAdd <spell> to the book\n"
+            "list\t\t\tList all spells in the book\n"
+            "list <spell>\t\tList <spell> and its children\n"
+            "add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\t\tAdd <spell> to the book\n"
             "remove <spell>\t\tRemove <spell> and its children from the book\n")
 
 
@@ -174,12 +177,31 @@ def get_resolve_statement(command, left_delimiter, right_delimiter, depth):
 
 # # # MISC # # #
 
-def print_spell_compact(name, spell):
+def parse_args(args):
+
+    named_args = dict()
+    ordered_args = list()
+
+    arg_name = None
+
+    for arg in args:
+        if arg.startswith("-"):
+            arg_name = arg[2:] if arg.startswith("--") else arg[1:]
+        elif arg_name is not None:
+            named_args[arg_name] = arg
+            arg_name = None
+        else:
+            ordered_args.append(arg)
+
+    return named_args, ordered_args
+
+
+def print_spell(name, spell):
 
     if "command" in spell:
         print(" ".join(name) + " => " + ("" if spell["command"] is None else spell["command"]))
     for subname, subspell in sorted(spell["spells"].items()):
-        print_spell_compact(name + [subname], subspell)
+        print_spell(name + [subname], subspell)
 
 
 def file_to_json(path):
