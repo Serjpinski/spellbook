@@ -86,9 +86,13 @@ def op_add(name, args):
         hierarchy.append(spell)
 
     spell = hierarchy[-1]
+    
     spell["command"] = command
-    spell["left_delimiter"] = left_delimiter
-    spell["right_delimiter"] = right_delimiter
+
+    if left_delimiter is not None:
+        spell["left_delimiter"] = left_delimiter
+    if right_delimiter is not None:
+        spell["right_delimiter"] = right_delimiter
 
     update_data_files(book)
 
