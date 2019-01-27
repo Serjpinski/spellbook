@@ -86,7 +86,7 @@ def op_add(name, args):
         hierarchy.append(spell)
 
     spell = hierarchy[-1]
-    
+
     spell["command"] = command
 
     if left_delimiter is not None:
@@ -134,10 +134,10 @@ def update_data_files(book):
 def get_usage():
 
     return ("Usage:\n"
-            "list\t\t\tList all spells in the book\n"
-            "list <spell>\t\tList <spell> and its children\n"
-            "add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\t\tAdd <spell> to the book\n"
-            "remove <spell>\t\tRemove <spell> and its children from the book\n")
+            "list --- List all spells in the book\n"
+            "list <spell> --- List <spell> and its children\n"
+            "add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>] --- Add <spell> to the book\n"
+            "remove <spell> --- Remove <spell> and its children from the book\n")
 
 
 # # # ALIAS GENERATION # # #
