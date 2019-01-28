@@ -95,8 +95,13 @@ def op_add(name, args):
 
     if left_delimiter is not None:
         spell["left_delimiter"] = left_delimiter
+    elif "left_delimiter" in spell:
+        spell.pop("left_delimiter")
+
     if right_delimiter is not None:
         spell["right_delimiter"] = right_delimiter
+    elif "right_delimiter" in spell:
+        spell.pop("right_delimiter")
 
     update_data_files(book)
 
