@@ -115,9 +115,12 @@ def op_remove(name):
         if len(book["spells"]) == 0:  # If no subspells, just remove it
             hierarchy[-2]["spells"].pop(name[-1])
         else:  # Clean spell fields, but keep subspells
-            hierarchy[-1].pop("command")
-            hierarchy[-1].pop("left_delimiter")
-            hierarchy[-1].pop("right_delimiter")
+            if "command" in hierarchy[-1]:
+                hierarchy[-1].pop("command")
+            if "left_delimiter" in hierarchy[-1]:
+                hierarchy[-1].pop("left_delimiter")
+            if "right_delimiter" in hierarchy[-1]:
+                hierarchy[-1].pop("right_delimiter")
 
         update_data_files(book)
 
