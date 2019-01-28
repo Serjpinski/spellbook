@@ -117,7 +117,7 @@ def op_remove(name):
         print("Spell not found: {}".format(" ".join(name)))
         exit(1)
     else:
-        if len(book["spells"]) == 0:  # If no subspells, just remove it
+        if len(hierarchy[-1]["spells"]) == 0:  # If no subspells, just remove it
             hierarchy[-2]["spells"].pop(name[-1])
         else:  # Clean spell fields, but keep subspells
             if "command" in hierarchy[-1]:
