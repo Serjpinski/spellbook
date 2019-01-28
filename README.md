@@ -5,7 +5,8 @@ Shell alias manager
 
 Add to shell config file:
 ```sh
-source {spellbook_path}/spellbook.sh
+SPELLBOOK_PATH={spellbook_path}
+source $SPELLBOOK_PATH/spellbook.sh $SPELLBOOK_PATH
 ```
 
 After reloading your shell, you will be able to:

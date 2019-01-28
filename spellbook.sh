@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-BASE_DIR=$(dirname "$0")
+BASE_DIR=$1
 
 alias spellreload='source ${BASE_DIR}/book.alias'
 
