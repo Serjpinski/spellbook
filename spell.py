@@ -2,6 +2,8 @@ import json
 import os
 import sys
 
+VERSION = "1.0.0"
+
 BASE_DIR = os.path.dirname(__file__)
 BOOK_FILE = os.path.join(BASE_DIR, "book.json")
 ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
@@ -27,7 +29,9 @@ def main():
     named_args, ordered_args = parse_args(args)
 
     if len(ordered_args) == 0:
-        print(get_usage())
+        print(op_help(""))
+    elif ordered_args[0] == "help":
+        op_list(ordered_args[1] if len(ordered_args) > 1 else None)
     elif ordered_args[0] == "list":
         op_list(ordered_args[1:])
     elif ordered_args[0] == "add" and len(ordered_args) > 1:
@@ -36,8 +40,7 @@ def main():
         op_remove(ordered_args[1:])
     # TODO add import/export from/to json
     else:
-        # TODO add help option with info about other options, i.e. spell help add
-        print(get_usage())
+        print(op_help(""))
         exit(1)
 
 
@@ -109,7 +112,13 @@ def op_remove(name):
         print("Spell not found: {}".format(" ".join(name)))
         exit(1)
     else:
-        hierarchy[-2]["spells"].pop(name[-1])
+        if len(book["spells"]) == 0:  # If no subspells, just remove it
+            hierarchy[-2]["spells"].pop(name[-1])
+        else:  # Clean spell fields, but keep subspells
+            hierarchy[-1].pop("command")
+            hierarchy[-1].pop("left_delimiter")
+            hierarchy[-1].pop("right_delimiter")
+
         update_data_files(book)
 
 
@@ -130,21 +139,6 @@ def get_book():
 def update_data_files(book):
     json_to_file(book, BOOK_FILE)
     string_to_file(get_aliases(book), ALIAS_FILE)
-
-
-def get_usage():
-
-    return (
-        "/----------------------------------------------------------------------------------------------------------\\\n"
-        "| list                                                                     | List all spells in book       |\n"
-        "|--------------------------------------------------------------------------|-------------------------------|\n"
-        "| list <spell>                                                             | List <spell> and its children |\n"
-        "|--------------------------------------------------------------------------|-------------------------------|\n"
-        "| add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>] | Add <spell> to book           |\n"
-        "|--------------------------------------------------------------------------|-------------------------------|\n"
-        "| remove <spell>                                                           | Remove <spell> from book      |\n"
-        "\----------------------------------------------------------------------------------------------------------/\n"
-    )
 
 
 # # # ALIAS GENERATION # # #
@@ -230,6 +224,52 @@ def string_to_file(string, path):
     with open(path, 'w') as f:
         f.write(string)
 
+
+def op_help(op):
+
+    if op == "list":
+        print(get_banner() +
+              "spell list [<spell>]\n" +
+              "* List <spell> and its children.\n"
+              "* If <spell> is missing, list all spells in book.\n" +
+              "Examples:\n" +
+              "spell list              ---  List all spells.\n" +
+              "spell list deploy prod  ---  List \"deploy prod\" and its children.\n"
+              )
+    elif op == "add":
+        print(get_banner() +
+              "spell add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\n" +
+              "* Add <spell> to book.\n"
+              "* Invoking the new spell will execute <command>.\n" +
+              "* If present, <left_delimiter> and <right_delimiter> will be used for escaping argument definitions\n" +
+              "within <command>. Defaults are \"{\" and \"}\".\n" +
+              "Examples:\n" +
+              "spell add deploy prod -c \"sh $HOME/deploy_prod.sh\"  ---  Add \"deploy prod\" spell.\n" +
+              "spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]\n"
+              "---  Add \"deploy\" spell. Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
+              )
+    elif op == "remove":
+        print(get_banner() +
+              "spell remove <spell>\n" +
+              "* Remove <spell> from book.\n"
+              "Example:\n" +
+              "spell remove deploy prod  ---  Remove \"deploy prod\" spell.\n"
+              )
+    else:
+        print(get_banner() +
+              "help    ---  Show this message or info about commands.\n" +
+              "list    ---  List spells in book (use \"spell help list\" for more info).\n" +
+              "add     ---  Add a spell to book (use \"spell help add\" for more info).\n" +
+              "remove  ---  Remove a spell from book (use \"spell help remove\" for more info).\n"
+              )
+
+
+def get_banner():
+    return ("   ____         ______             __ __\n"
+            "  / __/__  ___ / / / /  ___  ___  / //_/\n"
+            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/ ,<   \n"
+            "/___/ .__/\\__/_/_/_.__/\\___/\\___/_/|_|  \n"
+            "   /_/   version " + VERSION + "\n")
 
 if __name__ == '__main__':
     main()
