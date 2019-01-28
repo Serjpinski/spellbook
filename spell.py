@@ -31,7 +31,7 @@ def main():
     if len(ordered_args) == 0:
         op_help("")
     elif ordered_args[0] == "help":
-        op_list(ordered_args[1] if len(ordered_args) > 1 else None)
+        op_help(ordered_args[1] if len(ordered_args) > 1 else None)
     elif ordered_args[0] == "list":
         op_list(ordered_args[1:])
     elif ordered_args[0] == "add" and len(ordered_args) > 1:
