@@ -225,7 +225,7 @@ def file_to_json(path):
 
 
 def json_to_file(j, path):
-    string_to_file(json.dumps(j), path)
+    string_to_file(json.dumps(j) + "\n", path)
 
 
 def string_to_file(string, path):
