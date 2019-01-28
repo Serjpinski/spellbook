@@ -230,29 +230,29 @@ def op_help(op):
     if op == "list":
         print(get_banner() +
               "spell list [<spell>]\n" +
-              "* List <spell> and its children.\n"
-              "* If <spell> is missing, list all spells in book.\n" +
-              "Examples:\n" +
+              "- List <spell> and its children.\n"
+              "- If <spell> is missing, list all spells in book.\n" +
+              "\nExamples:\n" +
               "spell list              ---  List all spells.\n" +
               "spell list deploy prod  ---  List \"deploy prod\" and its children.\n"
               )
     elif op == "add":
         print(get_banner() +
               "spell add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\n" +
-              "* Add <spell> to book.\n"
-              "* Invoking the new spell will execute <command>.\n" +
-              "* If present, <left_delimiter> and <right_delimiter> will be used for escaping argument definitions\n" +
+              "- Add <spell> to book.\n"
+              "- Invoking the new spell will execute <command>.\n" +
+              "- If present, <left_delimiter> and <right_delimiter> will be used for escaping argument definitions\n" +
               "within <command>. Defaults are \"{\" and \"}\".\n" +
-              "Examples:\n" +
+              "\nExamples:\n" +
               "spell add deploy prod -c \"sh $HOME/deploy_prod.sh\"  ---  Add \"deploy prod\" spell.\n" +
               "spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]\n"
-              "---  Add \"deploy\" spell. Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
+              "- Add \"deploy\" spell. Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
               )
     elif op == "remove":
         print(get_banner() +
               "spell remove <spell>\n" +
-              "* Remove <spell> from book.\n"
-              "Example:\n" +
+              "- Remove <spell> from book.\n"
+              "\nExample:\n" +
               "spell remove deploy prod  ---  Remove \"deploy prod\" spell.\n"
               )
     else:
@@ -267,7 +267,7 @@ def op_help(op):
 def get_banner():
     return ("   ____         ______             __ __\n"
             "  / __/__  ___ / / / /  ___  ___  / //_/\n"
-            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/ /<   \n"
+            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/  <   \n"
             "/___/ .__/\\__/_/_/_.__/\\___/\\___/_/|_|  \n"
             "   /_/ version " + VERSION + "\n\n")
 
