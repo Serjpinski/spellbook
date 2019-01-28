@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+BASE_DIR=$1
 
 alias spellreload='source ${BASE_DIR}/book.alias'
 
