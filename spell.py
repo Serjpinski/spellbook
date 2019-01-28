@@ -29,7 +29,7 @@ def main():
     named_args, ordered_args = parse_args(args)
 
     if len(ordered_args) == 0:
-        print(op_help(""))
+        op_help("")
     elif ordered_args[0] == "help":
         op_list(ordered_args[1] if len(ordered_args) > 1 else None)
     elif ordered_args[0] == "list":
@@ -40,7 +40,7 @@ def main():
         op_remove(ordered_args[1:])
     # TODO add import/export from/to json
     else:
-        print(op_help(""))
+        op_help("")
         exit(1)
 
 
@@ -267,9 +267,9 @@ def op_help(op):
 def get_banner():
     return ("   ____         ______             __ __\n"
             "  / __/__  ___ / / / /  ___  ___  / //_/\n"
-            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/ ,<   \n"
+            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/ /<   \n"
             "/___/ .__/\\__/_/_/_.__/\\___/\\___/_/|_|  \n"
-            "   /_/   version " + VERSION + "\n")
+            "   /_/ version " + VERSION + "\n\n")
 
 if __name__ == '__main__':
     main()
