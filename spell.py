@@ -245,8 +245,8 @@ def op_help(op):
               "within <command>. Defaults are \"{\" and \"}\".\n" +
               "\nExamples:\n" +
               "spell add deploy prod -c \"sh $HOME/deploy_prod.sh\"  ---  Add \"deploy prod\" spell.\n" +
-              "spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]\n"
-              "- Add \"deploy\" spell. Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
+              "spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]  ---  Add \"deploy\" spell.\n"
+              "Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
               )
     elif op == "remove":
         print(get_banner() +
