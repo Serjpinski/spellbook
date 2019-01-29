@@ -277,7 +277,7 @@ def get_banner():
             "  / __/__  ___ / / / /  ___  ___  / //_/\n"
             " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/  <   \n"
             "/___/ .__/\\__/_/_/_.__/\\___/\\___/_/|_|  \n"
-            "   /_/ version " + VERSION + "\n\n")
+            "   /_/ shell alias manager " + VERSION + "\n\n")
 
 if __name__ == '__main__':
     main()
