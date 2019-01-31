@@ -21,7 +21,7 @@ ALIAS_FILE = os.path.join(BASE_DIR, "book.alias")
 # TODO command => echo $i
 # TODO for i in a b c; do echo $i; done
 
-# TODO use external bash file with functions to process arguments and/or resolve final command?
+# TODO flag for debugging failing spells (add echos)
 
 def main():
 
@@ -117,7 +117,7 @@ def op_remove(name):
         print("Spell not found: {}".format(" ".join(name)))
         exit(1)
     else:
-        if len(hierarchy[-1]["spells"]) == 0:  # If no subspells, just remove it
+        if len(hierarchy[-1]["spells"]) == 0:  # If no subspells, just remove it # TODO fix this for deeper empty chains
             hierarchy[-2]["spells"].pop(name[-1])
         else:  # Clean spell fields, but keep subspells
             if "command" in hierarchy[-1]:
