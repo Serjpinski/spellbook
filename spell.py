@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 BASE_DIR = os.path.dirname(__file__)
 BOOK_FILE = os.path.join(BASE_DIR, "book.json")
@@ -212,9 +212,17 @@ def parse_args(args):
 def print_spell(name, spell):
 
     if "command" in spell:
-        print(" ".join(name) + " => " + ("" if spell["command"] is None else spell["command"]))
+        print(spell_to_string(" ".join(name), spell["command"]))
     for subname, subspell in sorted(spell["spells"].items()):
         print_spell(name + [subname], subspell)
+
+
+def spell_to_string(name, command):
+    return colored_spell_name(name) + ("" if command is None else colored(YELLOW, " => ") + command)
+
+
+def colored_spell_name(name):
+    return colored(GREEN, name.split()[0]) + ("" if len(name.split()) == 1 else " " + colored(CYAN, " ".join(name.split()[1:])))
 
 
 def file_to_json(path):
@@ -237,47 +245,61 @@ def op_help(op):
 
     if op == "list":
         print(get_banner() +
-              "spell list [<spell>]\n" +
-              "- List <spell> and its children.\n"
-              "- If <spell> is missing, list all spells in book.\n" +
-              "\nExamples:\n" +
-              "spell list              ---  List all spells.\n" +
-              "spell list deploy prod  ---  List \"deploy prod\" and its children.\n"
+              colored_spell_name("spell list [<spell>]") + "\n" +
+              colored(YELLOW, " * ") + "List <spell> and its children.\n" +
+              colored(YELLOW, " * ") + "If <spell> is missing, list all spells in book.\n" +
+              "\n" +
+              colored(YELLOW, "-- Examples --") + "\n" +
+              spell_to_string("spell list", "List all spells.") + "\n" +
+              spell_to_string("spell list deploy prod", "List \"deploy prod\" and its children.") + "\n"
               )
     elif op == "add":
         print(get_banner() +
-              "spell add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]\n" +
-              "- Add <spell> to book.\n"
-              "- Invoking the new spell will execute <command>.\n" +
-              "- If present, <left_delimiter> and <right_delimiter> will be used for escaping argument definitions\n" +
+              colored_spell_name("spell add <spell> -c <command> [-ld <left_delimiter>]  [-rd <right_delimiter>]") + "\n" +
+              colored(YELLOW, " * ") + "Add <spell> to book.\n" +
+              colored(YELLOW, " * ") + "Invoking the new spell will execute <command>.\n" +
+              colored(YELLOW, " * ") + "If present, <left_delimiter> and <right_delimiter> will be used for escaping argument definitions\n" +
               "within <command>. Defaults are \"{\" and \"}\".\n" +
-              "\nExamples:\n" +
-              "spell add deploy prod -c \"sh $HOME/deploy_prod.sh\"  ---  Add \"deploy prod\" spell.\n" +
-              "spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]  ---  Add \"deploy\" spell.\n"
-              "Example usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
+              "\n" +
+              colored(YELLOW, "-- Examples --") + "\n" +
+              spell_to_string("spell add deploy prod -c \"sh $HOME/deploy_prod.sh\"", "Add \"deploy prod\" spell.") + "\n" +
+              spell_to_string("spell add deploy -c \"sh $HOME/deploy_[env].sh\" -ld [ -rd ]", "Add \"deploy\" spell.") + "\n" +
+              colored(YELLOW, " * ") + "Usage: \"deploy prod\" \"deploy --env prod\" \"deploy -env prod\"\n"
               )
     elif op == "remove":
         print(get_banner() +
-              "spell remove <spell>\n" +
-              "- Remove <spell> from book.\n"
-              "\nExample:\n" +
-              "spell remove deploy prod  ---  Remove \"deploy prod\" spell.\n"
+              colored_spell_name("spell remove <spell>") + "\n" +
+              colored(YELLOW, " * ") + "Remove <spell> from book.\n"
+              "\n" +
+              colored(YELLOW, "-- Examples --") + "\n" +
+              spell_to_string("spell remove deploy prod", "Remove \"deploy prod\" spell.") + "\n"
               )
     else:
         print(get_banner() +
-              "help    ---  Show this message or info about commands.\n" +
-              "list    ---  List spells in book (use \"spell help list\" for more info).\n" +
-              "add     ---  Add a spell to book (use \"spell help add\" for more info).\n" +
-              "remove  ---  Remove a spell from book (use \"spell help remove\" for more info).\n"
+              spell_to_string("help", "Show this message or info about commands.") + "\n" +
+              spell_to_string("list", "List spells in book (use \"spell help list\" for more info).") + "\n" +
+              spell_to_string("add", "Add a spell to book (use \"spell help add\" for more info).") + "\n" +
+              spell_to_string("remove", "Remove a spell from book (use \"spell help remove\" for more info).") + "\n"
               )
 
 
 def get_banner():
     return ("   ____         ______             __ __\n"
             "  / __/__  ___ / / / /  ___  ___  / //_/\n"
-            " _\\ \\/ _ \\/ -_) / / _ \\/ _ \\/ _ \\/  <   \n"
+            " _\\ \\/ _ \\/ -_/ / / _ \\/ _ \\/ _ \\/  <   \n"
             "/___/ .__/\\__/_/_/_.__/\\___/\\___/_/|_|  \n"
-            "   /_/ shell alias manager " + VERSION + "\n\n")
+            "   /_/ shell alias manager " + colored(GREEN, VERSION) + "\n\n")
+
+
+def colored(color, text):
+    return color + text + UNCOLORED;
+
+
+UNCOLORED='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[1;36m'
 
 
 if __name__ == '__main__':
